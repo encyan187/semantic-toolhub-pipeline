@@ -48,14 +48,60 @@ def get_repo_metadata(repo_name, token=None):
     if r.status_code == 200:
         data = r.json()
 
+        license_name = (data.get("license") or {}).get("name")
+        topics = data.get("topics") or []
+        description = data.get("description") or ""
+        language = data.get("language") or ""
+        updated_at = data.get("updated_at") or ""
+        stars = data.get("stargazers_count") or 0
+        html_url = data.get("html_url") or ""
+
         return {
-            "license": data.get("license", {}).get("name"),
-            "description": data.get("description"),
-            "topics": data.get("topics"),
-            "language": data.get("language"),
-            "updated_at": data.get("updated_at"),
-            "stars": data.get("stargazers_count"),
-            "url": data.get("html_url")
+            "license": license_name,
+            "description": description,
+            "topics": topics,
+            "language": language,
+            "updated_at": updated_at,
+            "stars": stars,
+            "url": html_url
         }
-    return {}
+
+        # In case of API errors or rate limits
+    return {
+        "license": None,
+        "description": None,
+        "topics": [],
+        "language": None,
+        "updated_at": None,
+        "stars": 0,
+        "url": None
+    }
+
+import re
+
+def clean_readme(readme_text):
+    if not isinstance(readme_text, str):
+        return ""
+
+    # Remove markdown headers and formatting
+    text = re.sub(r"#+\s*", "", readme_text)  # remove markdown headers
+    text = re.sub(r"`{1,3}.*?`{1,3}", "", text, flags=re.DOTALL)  # remove inline or block code
+    text = re.sub(r"\*\*(.*?)\*\*", r"\1", text)  # bold
+    text = re.sub(r"\*(.*?)\*", r"\1", text)      # italics
+    text = re.sub(r"\[(.*?)\]\(.*?\)", r"\1", text)  # [text](url) → text
+
+    # Remove HTML tags
+    text = re.sub(r"<[^>]+>", "", text)
+
+    # Remove badges (often image links at top)
+    text = re.sub(r"!\[.*?\]\(.*?\)", "", text)
+
+    # Remove remaining URLs
+    text = re.sub(r"http\S+", "", text)
+
+    # Remove extra whitespace
+    text = re.sub(r"\s+", " ", text).strip()
+
+    return text
+
     

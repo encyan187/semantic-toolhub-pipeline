@@ -23,9 +23,9 @@ def create_input(tool_metadata):
                 parts.append(text)
 
     # 2. Readme
-    readme = tool_metadata.get('readme', '')
-    if readme and readme.strip():
-        parts.append(readme.strip())
+    #readme = tool_metadata.get('readme', '')
+    #if readme and readme.strip():
+        #parts.append(readme.strip())
 
     # 3. Description
     desc = tool_metadata.get('wiki_description', '')

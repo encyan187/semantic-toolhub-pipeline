@@ -1,16 +1,16 @@
 import time
 from tqdm import tqdm
 import pandas as pd
-from extr_metadata.github_api import search_github_repo, get_readme, get_repo_metadata, clean_readme
-from extr_metadata.wikidata import get_wikidata_info
-from extr_metadata.crossref import search_crossref_papers
-from extr_metadata.paper_matching import find_best_matching_paper
+from github_api import search_github_repo, get_readme, get_repo_metadata, clean_readme
+from wikidata import get_wikidata_info
+from crossref import search_crossref_papers
+from paper_matching import find_best_matching_paper
 
 def run_pipeline(tool_names , token = None):
 
     meta_results = {}
 
-    for tool in tqdm(tool_names):
+    for tool in tool_names:
 
         meta = {}
 
@@ -55,7 +55,7 @@ def run_pipeline(tool_names , token = None):
 
                 if crossref and "description" in wikidata:
 
-                    best_paper = find_best_matching_paper(tool , wikidata["description"] , crossref , metadata.get("topics", None))
+                    best_paper = find_best_matching_paper(tool , wikidata["description"] , crossref)
 
                     if best_paper:
                         meta.update( {

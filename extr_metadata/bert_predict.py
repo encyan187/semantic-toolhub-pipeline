@@ -1,7 +1,8 @@
-from config import *
+import torch
+from config import THRESHOLD, DEVICE, TARGET_LIST, MAX_LEN
 
 
-def predict(text, model, tokenizer, max_len, threshold=0.3):
+def predict(text, model, tokenizer, max_len = MAX_LEN, threshold=THRESHOLD):
     encodings = tokenizer.encode_plus(
         text,
         None,
@@ -19,7 +20,7 @@ def predict(text, model, tokenizer, max_len, threshold=0.3):
         attention_mask = encodings["attention_mask"].to(DEVICE, dtype=torch.long)
         token_type_ids = encodings["token_type_ids"].to(DEVICE, dtype=torch.long)
         outputs = model(input_ids, attention_mask, token_type_ids)
-        final_outputs = torch.sigmoid(outputs).cpu().detach().numpy().tolist()
+        final_outputs = torch.sigmoid(outputs.logits).cpu().detach().numpy().tolist()
         print(final_outputs)
 
     all_predictions = []
@@ -32,4 +33,4 @@ def predict(text, model, tokenizer, max_len, threshold=0.3):
         ]
         all_predictions.append(labels)
 
-    return all_predictions
+    return all_predictions[0] if len(all_predictions) == 1 else all_predictions

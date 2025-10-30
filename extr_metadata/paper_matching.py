@@ -23,7 +23,7 @@ def find_best_matching_paper(tool_name, tool_description, crossref_results):
             score += 0.2
 
         keywords = ["software", "tool", "framework", "library", "platform", "we present", "we describe" , "semantic" ,
-                    "ontology"]
+                    "ontology", "we propose", "we introduce"]
 
         if any(k in title.lower() for k in keywords):
             score += 0.1

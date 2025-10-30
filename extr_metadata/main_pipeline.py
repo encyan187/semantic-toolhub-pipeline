@@ -1,24 +1,18 @@
 import json
-
+import sys
+from _ast import arg
+import pandas as pd
 from tqdm import tqdm
-
 from load_model import load_model
 from create_input import create_input
 from pipeline import run_pipeline
 from bert_predict import predict
 from llm_predict import classify_tool
-from save_results import save_all_results
-import pandas as pd
 
-if __name__ == "__main__":
 
-    data = pd.read_csv("Additional_Tool_Names.csv")
-
-    #tool_name = data["Name"].tolist()
+def main(tool_name):
 
     token = ""
-
-    tool_name = ["Protege", "Apache", "rdf2rml"]
 
     model, tokenizer = load_model()
 
@@ -57,10 +51,23 @@ if __name__ == "__main__":
 
         final_results[tool] = tool_info
 
-        with open("results.json", "w", encoding="utf-8") as f:
+        with open("outputs.json", "w", encoding="utf-8") as f:
             json.dump(final_results, f, indent=2, ensure_ascii=False)
 
-    print("Saved to results.json")
+    print("Saved to output.json")
 
 
+if __name__ == "__main__":
 
+    if len(sys.argv) < 2:
+        print("Use like this: python main_pipeline.py <tool1> [<tool2> ...]")
+        print("  python main_pipeline.py <tool_file.csv>")
+        sys.exit(1)
+
+    if arg.endswith(".csv"):
+        data = pd.read_csv(arg)
+        tool_name = data["Name"].dropna().tolist()
+    else:
+        tool_name = sys.argv[1:]
+
+    main(tool_name)
