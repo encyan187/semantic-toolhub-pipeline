@@ -1,0 +1,18 @@
+"""checkpoint_path = "checkpoints/eager-sweep-10_f1_0.3478.pt"
+
+# Reload checkpoint
+checkpoint = torch.load(checkpoint_path, map_location=DEVICE)
+
+# Recreate model and load weights
+model = SemanticBERT().to(DEVICE)
+model.load_state_dict(checkpoint['state_dict'])
+model.eval()
+
+# === Build dataloader ===
+test_loader = load_data_loader(TEST_DATASET_PATH, shuffle=False, batch_size=8)
+
+# === Run test ===
+f1_micro, f1_macro, precision, recall, report = final_eval(model, test_loader)
+
+print(f"f1_micro: {f1_micro:.3f} f1_macro: {f1_macro:.3f} precision: {precision:.3f} recall: {recall:.3f}")
+print(report)"""

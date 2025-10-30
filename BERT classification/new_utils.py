@@ -1,8 +1,13 @@
+import datetime
+import json
+import os
+import re
+import numpy as np
 import torch
 import shutil
-from sklearn.metrics import f1_score, precision_score, recall_score, classification_report
+from sklearn.metrics import f1_score, precision_score, recall_score, classification_report,precision_recall_curve
 import pandas as pd
-from new_config import TARGET_LIST, DEVICE, TRAIN_DATASET_PATH
+from new_config import TARGET_LIST, DEVICE, TRAIN_DATASET_PATH, TEXT_COLUMN
 
 def load_checkpoint(checkpoint_path, model, optimizer):
     checkpoint = torch.load(checkpoint_path)
@@ -18,7 +23,7 @@ def save_checkpoint(state, is_best, checkpoint_path, best_model_path):
         best_fpath = best_model_path
         shutil.copyfile(f_path, best_fpath)
 
-def compute_metrics(y_true, y_pred, threshold=0.6):
+def compute_metrics(y_true, y_pred, threshold=0.5):
 
     y_pred_bin = (y_pred >= threshold).astype(int)
 
@@ -55,32 +60,37 @@ def label_count(df):
 
     return counts
 
-def get_class_weights(df):
+def get_pos_weights_from_df(df, label_cols = TARGET_LIST, device = DEVICE):
+    # pos_c = count of positives per class
+    pos = df[label_cols].sum().astype(float)
+    N = len(df)
+    neg = N - pos
+    # Avoid division by zero; if a class has zero positives, set a big weight
+    eps = 1e-8
+    pos_weight = (neg / (pos + eps)).values
+    return torch.tensor(pos_weight, dtype=torch.float32, device=device)
 
-    label_counts = label_count(df)
+def get_pos_weights(path, text_col = TEXT_COLUMN, device = DEVICE):
+    df = pd.read_csv(path)
+    label_cols = [c for c in df.columns if c != text_col]
+    return get_pos_weights_from_df(df, label_cols, device)
 
-    imbalanced = list(zip(label_counts['label'], label_counts['occurrences']))
 
-    total_samples = sum(count for label, count in imbalanced)
-    num_classes = len(imbalanced)
+def save_eval(metrics, report_txt, out_dir = "eval_logs/", run_name = None):
 
-    class_weights = {}
-    for label, count in imbalanced:
-        weight = total_samples / (num_classes * count)
-        class_weights[label] = weight
+    os.makedirs(out_dir, exist_ok=True)
+    slug = re.sub(r"\W+", "_", run_name.strip()) if run_name else "run"
 
-    weights_list = [class_weights[label] for label, _ in imbalanced]
+    base = os.path.join(out_dir + run_name)
+    txt_path  = base + ".txt"
 
-    pos_weight = torch.tensor(weights_list, dtype=torch.float, device=DEVICE)
+    # write TXT (metrics + report)
+    with open(txt_path, "w", encoding="utf-8") as f:
+        f.write("=== Evaluation Metrics ===\n")
+        for k, v in metrics.items():
+            f.write(f"{k}: {v}\n")
+        f.write("\n=== Classification Report ===\n")
+        f.write(report_txt if report_txt.endswith("\n") else report_txt + "\n")
 
-    return pos_weight
-
-def get_pos_weights(path):
-
-    train_df = pd.read_csv(path)
-
-    pos_weight = get_class_weights(train_df)
-
-    print(pos_weight)
-
-    return pos_weight
+    print(f"[Saved] {txt_path}")
+    return {"txt": txt_path}

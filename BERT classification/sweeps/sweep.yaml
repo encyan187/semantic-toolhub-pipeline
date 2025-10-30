@@ -1,0 +1,17 @@
+program: model_pipeline.py
+name: hyperparam_search
+method: random
+metric:
+  goal: maximize
+  name: f1_macro
+parameters:
+  learning_rate:
+    min: 0.00001
+    max: 0.0002
+  batch_size:
+    values: [4, 8, 16]
+  epochs:
+    values: [20, 25, 30]
+  weight_decay:
+    min: 0.0
+    max: 0.05

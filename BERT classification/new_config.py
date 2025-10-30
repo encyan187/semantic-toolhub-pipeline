@@ -3,6 +3,7 @@ from transformers import BertTokenizer
 
 
 DATASET_PATH = 'data/final_dataset.csv'
+AUGMENT_DATASET_PATH = 'data/augment_dataset.csv'
 TRAIN_DATASET_PATH = 'data/train.csv'
 TEST_DATASET_PATH = 'data/test.csv'
 VAL_DATASET_PATH = 'data/val.csv'
@@ -25,13 +26,13 @@ TARGET_LIST = ['Federated Knowledge Graph Querying',
        'Knowledge Graph Maintenance', 'Knowledge Graph Materialization',
        'Knowledge Graph Population', 'Knowledge Graph Publication',
        'Knowledge Graph Query Engine', 'Knowledge Graph Querying',
-       'Knowledge Graph Reasoning', 'Knowledge Graph Requirement Elicitation',
+       'Knowledge Graph Reasoning ', 'Knowledge Graph Requirement Elicitation',
        'Knowledge Graph Storage', 'Knowledge Graph version management',
        'Logic Solver', 'Multi-Model Database', 'Numeric Ontology Analysis',
        'Ontology Modelling', 'Ontology Publication', 'Ontology Validation',
        'Ontology Visualization', 'Ontology versioning management',
        'Pure Triplestore', 'RDF API / Library',
-       'Schema based Knowledge Graph validation', 'Semantic Artefact Catalog',
+       'Schema based Knowledge Graph validation', 'Semantic Artefact Catalog ',
        'Sparql Query Builder', 'Sparql Query Result Visualizer',
        'Standalone Knowledge Graph Reasoner', 'Streaming Data',
        'Triplestore with reasoner', 'Version Management',
