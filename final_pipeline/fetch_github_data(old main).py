@@ -1,7 +1,7 @@
 import json
 from tqdm import tqdm
 import pandas as pd
-from extr_metadata.github_api import search_github_repo, get_readme, get_repo_metadata
+from final_pipeline.github_api import search_github_repo, get_readme, get_repo_metadata
 
 
 
