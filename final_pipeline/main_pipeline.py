@@ -64,6 +64,8 @@ if __name__ == "__main__":
         print("  python main_pipeline.py <tool_file.csv>")
         sys.exit(1)
 
+    arg = sys.argv[1]
+
     if arg.endswith(".csv"):
         data = pd.read_csv(arg)
         tool_name = data["Name"].dropna().tolist()
