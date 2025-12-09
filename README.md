@@ -13,5 +13,5 @@ Use **main_pipline.py** to run the pipeline via the console.
 
 You must include the software name with an active GitHub Repo. 
 
-It is also possible to include multiple software names.
+It is also possible to include multiple software names as a list or .csv file.
 
