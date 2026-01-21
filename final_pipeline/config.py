@@ -86,7 +86,7 @@ API_BASE    = "https://llama-max.ai.wu.ac.at"
 
 MODEL_ID    = "llama3.1:latest"
 
-API_KEY     = "sk-456ff07dfe994cbc97d9cf0a5d73aeb7"
+API_KEY     = ""
 
 HEADERS = {
     "Authorization": f"Bearer {API_KEY}",
